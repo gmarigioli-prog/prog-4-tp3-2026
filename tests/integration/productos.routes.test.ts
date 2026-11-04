@@ -19,6 +19,13 @@ describe('GET /productos/:id', () => {
     const res = await request(app).get('/productos/112');
     expect(res.status).toBe(404);
   });
+ // cambio tp3
+  it('devuelve precio y tipo de cafe', async () => {
+    const res = await request(app).get('/productos/1');
+    expect(res.status).toBe(200);
+    expect(res.body.precio).toBe(5000);
+    expect(res.body.tipoCafe).toBe('Molido');
+  });
 });
 describe('GET /productos', () => {
   let app: ReturnType<typeof makeApp>;
@@ -31,6 +38,14 @@ describe('GET /productos', () => {
     const res = await request(app).get('/productos');
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(20);
+  });
+
+  // cambio tp3
+  it('devuelve precio y tipo de cafe de todos los productos', async () => {
+    const res = await request(app).get('/productos');
+    expect(res.status).toBe(200);
+    expect(res.body[0].precio).toBe(5000);
+    expect(res.body[0].tipoCafe).toBe('Molido');
   });
 });
 describe('POST /pedidos', () => {
