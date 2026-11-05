@@ -34,9 +34,11 @@ describe('GET /pedidos/:id', () => {
     expect(res.body.total).toBe(10000);
   });
 
+  //mensaje de error añadido
   it('devuelve 404 cuando no existe', async () => {
     const res = await request(app).get('/pedidos/999');
     expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Pedido no encontrado');
   });
 });
 

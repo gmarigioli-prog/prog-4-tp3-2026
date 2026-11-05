@@ -15,9 +15,10 @@ describe('GET /productos/:id', () => {
     expect(res.body.nombre).toBe('Expreso Pocillo Brasil');
   });
 
-  it('devuelve 404 cuando el id no existe', async () => {
+  it('devuelve 404 y un mensaje de error cuando el id no existe', async () => {
     const res = await request(app).get('/productos/112');
     expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Producto no encontrado');
   });
  // cambio tp3
   it('devuelve precio y tipo de cafe', async () => {
