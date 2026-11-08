@@ -60,10 +60,13 @@ export function makePedidoRouter(pedidos: Pedido[] = []) {
     if (!pedido) {
       return res.status(404).json({ error: 'NotFound' });
     }
+      //cambio tp3
 
     res.json({
       ...pedido,
-      total: pedido.calcularTotal(productos)
+      estado: pedido.estado,
+      items: pedido.items,
+      total: pedido.calcularTotal(productos),
     });
   });
 
