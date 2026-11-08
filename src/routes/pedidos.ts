@@ -10,6 +10,7 @@ const createSchemaPedido = z.object({
       cantidad: z.number().int().positive(),
     }),
   ).min(1),
+  mesaId: z.number().int().positive().optional(),
   estado: z.enum(['pendiente', 'enviado', 'entregado']).optional()
 });
 
@@ -34,8 +35,8 @@ export function makePedidoRouter(pedidos: Pedido[] = []) {
     if (ProductoInvalido) {
       return res.status(400).json({ error: 'Producto no encontrado' });
     }
-
-    const pedido = new Pedido(nextId++, parsed.data.items, parsed.data.estado || 'pendiente');
+   // post acepta una id de mesa opcional
+    const pedido = new Pedido(nextId++, parsed.data.items, parsed.data.estado || 'pendiente', parsed.data.mesaId);
     pedidos.push(pedido);
 
     res.status(201).json({

@@ -14,7 +14,7 @@ describe('GET /productos/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body.nombre).toBe('Expreso Pocillo Brasil');
   });
-
+// mensaje de error añadido
   it('devuelve 404 y un mensaje de error cuando el id no existe', async () => {
     const res = await request(app).get('/productos/112');
     expect(res.status).toBe(404);
