@@ -9,6 +9,12 @@ export default defineConfig({
         target: "http://localhost:3000",
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/productos": {
+        target: "http://localhost:3000",
+      },
+      "/pedidos": {
+        target: "http://localhost:3000",
+      },
     },
   },
   test: {
