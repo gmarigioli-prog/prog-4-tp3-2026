@@ -14,10 +14,18 @@ describe('GET /productos/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body.nombre).toBe('Expreso Pocillo Brasil');
   });
-
-  it('devuelve 404 cuando el id no existe', async () => {
+// mensaje de error añadido
+  it('devuelve 404 y un mensaje de error cuando el id no existe', async () => {
     const res = await request(app).get('/productos/112');
     expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Producto no encontrado');
+  });
+ // cambio tp3
+  it('devuelve precio y tipo de cafe', async () => {
+    const res = await request(app).get('/productos/1');
+    expect(res.status).toBe(200);
+    expect(res.body.precio).toBe(5000);
+    expect(res.body.tipoCafe).toBe('Molido');
   });
 });
 describe('GET /productos', () => {
@@ -31,6 +39,14 @@ describe('GET /productos', () => {
     const res = await request(app).get('/productos');
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(20);
+  });
+
+  // cambio tp3
+  it('devuelve precio y tipo de cafe de todos los productos', async () => {
+    const res = await request(app).get('/productos');
+    expect(res.status).toBe(200);
+    expect(res.body[0].precio).toBe(5000);
+    expect(res.body[0].tipoCafe).toBe('Molido');
   });
 });
 describe('POST /pedidos', () => {

@@ -13,7 +13,8 @@ export class Pedido {
   constructor(
     public id: number,
     public items: ItemPedido[],
-    public estado: 'pendiente' | 'enviado' | 'entregado' = 'pendiente'
+    public estado: 'pendiente' | 'enviado' | 'entregado' = 'pendiente',
+    public mesaId?: number
   ) {}
 
   calcularTotal(productos: ProductoConPrecio[]): number {

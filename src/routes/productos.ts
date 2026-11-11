@@ -19,7 +19,9 @@ export function makeProductoRouter() {
   router.get('/:id', (req, res) => {
     const id = Number(req.params.id);
     const producto = productos.find(producto => producto.id === id);
-
+    //cambio tp3
+    const precio = producto?.calcularPrecio();
+    const tipoCafe = producto instanceof (require('../models/Producto').Expreso) ? 'Molido' : producto instanceof (require('../models/Producto').Filtrado) ? 'Molido' : 'N/A';
     if (!producto) {
       return res.status(404).json({ error: 'NotFound' });
     }
