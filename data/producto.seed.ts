@@ -9,9 +9,9 @@ export const productos = [
   new Expreso(5, "Mediano", "Colombia"),
   new Expreso(6, "Mediano", "Etiopia"),
 
-  new Expreso(7, "Taza grande", "Brasil"),
-  new Expreso(8, "Taza grande", "Colombia"),
-  new Expreso(9, "Taza grande", "Etiopia"),
+  new Expreso(7, "Grande", "Brasil"),
+  new Expreso(8, "Grande", "Colombia"),
+  new Expreso(9, "Grande", "Etiopia"),
 
   new Filtrado(10, "Pocillo", "Brasil"),
   new Filtrado(11, "Pocillo", "Colombia"),
@@ -21,9 +21,9 @@ export const productos = [
   new Filtrado(14, "Mediano", "Colombia"),
   new Filtrado(15, "Mediano", "Etiopia"),
 
-  new Filtrado(16, "Taza grande", "Brasil"),
-  new Filtrado(17, "Taza grande", "Colombia"),
-  new Filtrado(18, "Taza grande", "Etiopia"),
+  new Filtrado(16, "Grande", "Brasil"),
+  new Filtrado(17, "Grande", "Colombia"),
+  new Filtrado(18, "Grande", "Etiopia"),
 
   new Pasteleria(19, "Muffin de chocolate", 2500),
   new Pasteleria(20, "Torta selva negra", 4200),
