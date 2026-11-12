@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Menu from "./Menu";
 import { server } from "../test/msw";
+import { CarritoProvider } from "../carrito/CarritoContext";
 
 const productos = [
   { id: 1, nombre: "Expreso Mediano Colombia", precio: 7360 },
@@ -14,13 +15,21 @@ function responderProductos() {
   return HttpResponse.json(productos);
 }
 
+function renderMenu() {
+  return render(
+    <CarritoProvider>
+      <Menu />
+    </CarritoProvider>,
+  );
+}
+
 describe("Menu con API", () => {
   beforeEach(() => {
     server.use(http.get("/productos", responderProductos));
   });
 
   it("muestra los productos de una respuesta 200 valida", async () => {
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText("Expreso Mediano Colombia"),
@@ -33,7 +42,7 @@ describe("Menu con API", () => {
     server.use(
       http.get("/productos", () => new HttpResponse(null, { status: 500 })),
     );
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText("No se pudo cargar el menú"),
@@ -49,7 +58,7 @@ describe("Menu con API", () => {
 
   it("muestra un error cuando la red se cae", async () => {
     server.use(http.get("/productos", () => HttpResponse.error()));
-    render(<Menu />);
+    renderMenu();
 
     expect(await screen.findByText(/failed to fetch/i)).toBeInTheDocument();
     expect(
@@ -63,7 +72,7 @@ describe("Menu con API", () => {
         HttpResponse.json([{ id: 1, nombre: "Sin precio" }]),
       ),
     );
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText(
@@ -76,7 +85,7 @@ describe("Menu con API", () => {
     server.use(
       http.get("/productos", () => new HttpResponse(null, { status: 400 })),
     );
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText("No se pudo cargar el menú"),
