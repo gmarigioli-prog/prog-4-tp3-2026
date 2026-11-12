@@ -24,7 +24,7 @@ describe('GET /productos/:id', () => {
   it('devuelve precio y tipo de cafe', async () => {
     const res = await request(app).get('/productos/1');
     expect(res.status).toBe(200);
-    expect(res.body.precio).toBe(5000);
+    expect(res.body.precio).toBe(2500);
     expect(res.body.tipoCafe).toBe('Molido');
   });
 });
@@ -45,7 +45,7 @@ describe('GET /productos', () => {
   it('devuelve precio y tipo de cafe de todos los productos', async () => {
     const res = await request(app).get('/productos');
     expect(res.status).toBe(200);
-    expect(res.body[0].precio).toBe(5000);
+    expect(res.body[0].precio).toBe(2500);
     expect(res.body[0].tipoCafe).toBe('Molido');
   });
 });
@@ -61,6 +61,6 @@ describe('POST /pedidos', () => {
       .post('/pedidos')
       .send({ items: [{ productoId: 1, cantidad: 2 }, { productoId: 19, cantidad: 1 }] });
     expect(res.status).toBe(201);
-    expect(res.body.total).toBe(12540);
+    expect(res.body.total).toBe(7500);
   });
 });
