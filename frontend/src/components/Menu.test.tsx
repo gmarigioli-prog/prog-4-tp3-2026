@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { obtenerProductos } from "../api/productos";
+import { CarritoProvider } from "../carrito/CarritoContext";
+import { CarritoUI } from "../carrito/CarritoUI";
 import Menu from "./Menu";
 
 vi.mock("../api/productos", () => ({
@@ -15,6 +17,15 @@ describe("Menu", () => {
     { id: 19, nombre: "Muffin de chocolate", precio: 2500 },
   ];
 
+  function renderMenu() {
+    return render(
+      <CarritoProvider>
+        <Menu />
+        <CarritoUI />
+      </CarritoProvider>,
+    );
+  }
+
   beforeEach(() => {
     obtenerProductosMock.mockReset();
   });
@@ -22,7 +33,7 @@ describe("Menu", () => {
   it("muestra Cargando al iniciar", () => {
     obtenerProductosMock.mockReturnValue(new Promise(() => {}));
 
-    render(<Menu />);
+    renderMenu();
 
     expect(screen.getByText("Cargando")).toBeInTheDocument();
   });
@@ -30,7 +41,7 @@ describe("Menu", () => {
   it("muestra los productos cuando la carga resuelve", async () => {
     obtenerProductosMock.mockResolvedValue(productos);
 
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText("Expreso Mediano Colombia"),
@@ -43,7 +54,7 @@ describe("Menu", () => {
       new Error("No se pudo cargar el menu"),
     );
 
-    render(<Menu />);
+    renderMenu();
 
     expect(
       await screen.findByText("No se pudo cargar el menu"),
@@ -59,7 +70,7 @@ describe("Menu", () => {
       .mockRejectedValueOnce(new Error("No se pudo cargar el menu"))
       .mockResolvedValueOnce(productos);
 
-    render(<Menu />);
+    renderMenu();
 
     await user.click(await screen.findByRole("button", { name: "Reintentar" }));
 
@@ -69,5 +80,60 @@ describe("Menu", () => {
     expect(
       await screen.findByText("Expreso Mediano Colombia"),
     ).toBeInTheDocument();
+  });
+
+  it("guia la elección secuencial y agrega la combinación completa al carrito", async () => {
+    const user = userEvent.setup();
+    obtenerProductosMock.mockResolvedValue(productos);
+
+    renderMenu();
+
+    const tamanio = await screen.findByLabelText("Tamaño");
+    const origen = screen.getByLabelText("País de origen");
+    expect(tamanio).toBeDisabled();
+    expect(origen).toBeDisabled();
+
+    await user.selectOptions(screen.getByLabelText("Tipo de bebida"), "Expreso");
+    expect(tamanio).toBeEnabled();
+    expect(origen).toBeDisabled();
+
+    await user.selectOptions(tamanio, "Mediano");
+    expect(screen.getByText(/Precio desde:/)).toBeInTheDocument();
+    expect(origen).toBeEnabled();
+    expect(
+      screen.queryByRole("button", { name: "Agregar café al carrito" }),
+    ).not.toBeInTheDocument();
+
+    await user.selectOptions(origen, "Colombia");
+    expect(
+      screen.getByText("Dulce y equilibrado, con notas frutales.", {
+        selector: "p",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Precio total:/)).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Agregar café al carrito" }),
+    );
+
+    expect(screen.getByText("Cantidad: 1")).toBeInTheDocument();
+  });
+
+  it("limpia las opciones posteriores al cambiar una elección anterior", async () => {
+    const user = userEvent.setup();
+    obtenerProductosMock.mockResolvedValue(productos);
+
+    renderMenu();
+
+    await user.selectOptions(
+      await screen.findByLabelText("Tipo de bebida"),
+      "Expreso",
+    );
+    await user.selectOptions(screen.getByLabelText("Tamaño"), "Mediano");
+    await user.selectOptions(screen.getByLabelText("País de origen"), "Colombia");
+    await user.selectOptions(screen.getByLabelText("Tipo de bebida"), "Filtrado");
+
+    expect(screen.getByLabelText("Tamaño")).toHaveValue("");
+    expect(screen.getByLabelText("País de origen")).toHaveValue("");
+    expect(screen.getByLabelText("País de origen")).toBeDisabled();
   });
 });
