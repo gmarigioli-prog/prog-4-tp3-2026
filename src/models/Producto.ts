@@ -1,37 +1,50 @@
+export const preciosCafe = {
+  tipo: { Expreso: 2500, Filtrado: 3200 },
+  adicionalTamanio: { Pocillo: 0, Mediano: 700, Grande: 1400 },
+  adicionalOrigen: { Brasil: 0, Colombia: 500, Etiopia: 1000 },
+} as const;
+
+type TamanioCafe = keyof typeof preciosCafe.adicionalTamanio;
+type OrigenCafe = keyof typeof preciosCafe.adicionalOrigen;
+
+function calcularPrecioCafe(
+  tipo: keyof typeof preciosCafe.tipo,
+  tamanio: TamanioCafe,
+  origen: OrigenCafe,
+): number {
+  return (
+    preciosCafe.tipo[tipo] +
+    preciosCafe.adicionalTamanio[tamanio] +
+    preciosCafe.adicionalOrigen[origen]
+  );
+}
+
 export class Expreso {
   constructor(
     public id: number,
-    public tamanio: string,
-    public variedad: string
+    public tamanio: TamanioCafe,
+    public variedad: OrigenCafe
   ) {}
   get nombre(): string {
   return `Expreso ${this.tamanio} ${this.variedad}`;
 }
 
   calcularPrecio(): number {
-    const GramosPorTamanio = {Pocillo: 18, Mediano: 27, 'Taza grande': 36};
-    const precioPorGramo = {Brasil: 140, Colombia: 180, Etiopia: 240};
-    const gramos = GramosPorTamanio[this.tamanio];
-    const precioGramo = precioPorGramo[this.variedad];
-    return  2500 + gramos * precioGramo;
+    return calcularPrecioCafe("Expreso", this.tamanio, this.variedad);
   }
 }
 export class Filtrado{
     constructor(
         public id: number,
-        public tamanio: string,
-        public variedad: string,
+        public tamanio: TamanioCafe,
+        public variedad: OrigenCafe,
     ){}
     get nombre(): string {
     return `Filtrado ${this.tamanio} ${this.variedad}`;
 }
 
     calcularPrecio(): number {
-    const GramosPorTamanio = {Pocillo: 6, Mediano: 15, 'Taza grande': 25};
-    const precioPorGramo = {Brasil: 140, Colombia: 180, Etiopia: 240};
-    const gramos = GramosPorTamanio[this.tamanio];
-    const precioGramo = precioPorGramo[this.variedad];
-    return  3200 + gramos * precioGramo;
+    return calcularPrecioCafe("Filtrado", this.tamanio, this.variedad);
   }
 }
 export class Pasteleria{
