@@ -72,6 +72,16 @@ describe("Menu", () => {
     expect(screen.queryByText("Muffin de chocolate")).not.toBeInTheDocument();
   });
 
+  it("los productos de pasteleria tienen sus propios botones de agregar al carrito", async () => {
+    const user = userEvent.setup();
+    obtenerProductosMock.mockResolvedValue(productos);
+
+    renderMenu();
+
+    await user.click(screen.getByText("Muffin de chocolate"));
+    expect(screen.getByText("Agregar muffin al carrito")).toBeInTheDocument();
+  });
+
   it("muestra un error y el boton Reintentar cuando la carga rechaza", async () => {
     obtenerProductosMock.mockRejectedValue(
       new Error("No se pudo cargar el menu"),
