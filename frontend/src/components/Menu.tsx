@@ -50,7 +50,7 @@ function Menu() {
     void cargarProductos();
   }, [cargarProductos]);
 
-  const tamanioCatalogo = tamanio === "Grande" ? "Taza grande" : tamanio;
+  const tamanioCatalogo = tamanio
   const prefijoCombinacion =
     tipo && tamanioCatalogo ? `${tipo} ${tamanioCatalogo} ` : "";
   const combinaciones = prefijoCombinacion
