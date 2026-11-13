@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { obtenerProductos, type Producto } from "../api/productos";
+import { obtenerProductos, type Producto } from "../api/api";
 import { useCarrito } from "../carrito/CarritoContext";
 
 type Estado = "cargando" | "error" | "listo";

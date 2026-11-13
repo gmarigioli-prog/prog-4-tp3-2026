@@ -174,7 +174,11 @@ describe("Menu con API", () => {
   }).format(17220);
 
   expect(
-    screen.getByText(`Total: ${totalFormateado}`),
+    screen.getByText(
+      (texto) =>
+        texto.replace(/\s/g, " ") ===
+        `Total: ${totalFormateado}`.replace(/\s/g, " "),
+    ),
   ).toBeInTheDocument();
 });
 

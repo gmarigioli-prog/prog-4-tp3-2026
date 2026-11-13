@@ -14,7 +14,7 @@ function App() {
           <h1>{mesa ? `Mesa ${mesa}` : "Retiro en barra"}</h1>
         </header>
         <Menu />
-        <CarritoUI />
+        <CarritoUI mesaId={mesa} />
       </main>
     </CarritoProvider>
   );

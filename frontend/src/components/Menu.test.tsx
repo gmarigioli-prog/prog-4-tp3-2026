@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { obtenerProductos } from "../api/productos";
+import { obtenerProductos } from "../api/api";
 import { CarritoProvider } from "../carrito/CarritoContext";
 import { CarritoUI } from "../carrito/CarritoUI";
 import Menu from "./Menu";
 
-vi.mock("../api/productos", () => ({
+vi.mock("../api/api", () => ({
   obtenerProductos: vi.fn(),
+  crearPedido: vi.fn(),
 }));
 
 describe("Menu", () => {
@@ -74,13 +75,23 @@ describe("Menu", () => {
 
   it("los productos de pasteleria tienen sus propios botones de agregar al carrito", async () => {
     const user = userEvent.setup();
-    obtenerProductosMock.mockResolvedValue(productos);
+    obtenerProductosMock.mockResolvedValue([
+      ...productos,
+      { id: 20, nombre: "Torta selva negra", precio: 7000 },
+    ]);
 
     renderMenu();
 
-    await user.click(screen.getByText("Muffin de chocolate"));
-    await user.click(screen.getByText("Torta selva negra"));
-    expect(screen.getByText("Agregar al carrito")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Expreso Mediano Colombia"),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Pastelería" }));
+
+    expect(screen.getByText("Muffin de chocolate")).toBeInTheDocument();
+    expect(screen.getByText("Torta selva negra")).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("button", { name: "Agregar al carrito" }),
+    ).toHaveLength(2);
   });
 
   it("muestra un error y el boton Reintentar cuando la carga rechaza", async () => {
@@ -140,7 +151,7 @@ describe("Menu", () => {
 
     await user.selectOptions(origen, "Colombia");
     expect(
-      screen.getByText("Dulce y equilibrado, con notas frutales.", {
+      screen.getByText("Dulce, equilibrado, frutal.", {
         selector: "p",
       }),
     ).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { obtenerProductos } from "./productos";
+import { obtenerProductos } from "./api";
 
 describe("obtenerProductos", () => {
   const fetchMock = vi.fn();
