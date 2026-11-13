@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import Menu from "./Menu";
 import { server } from "../test/msw";
 import { CarritoProvider } from "../carrito/CarritoContext";
+import App from "../App";
 
 const productos = [
   { id: 1, nombre: "Expreso Mediano Colombia", precio: 7360 },
@@ -95,4 +96,86 @@ describe("Menu con API", () => {
       await screen.findByText("No se pudo cargar el menú"),
     ).toBeInTheDocument();
   });
+
+  it("envía el pedido completo a la API y muestra la confirmación", async () => {
+  const user = userEvent.setup();
+  let cuerpoRecibido: unknown;
+
+  server.use(
+    http.post("/pedidos", async ({ request }) => {
+      cuerpoRecibido = await request.json();
+
+      return HttpResponse.json(
+        {
+          id: 21,
+          items: [
+            { productoId: 1, cantidad: 2 },
+            { productoId: 19, cantidad: 1 },
+          ],
+          estado: "pendiente",
+          mesaId: 4,
+          total: 17220,
+        },
+        { status: 201 },
+      );
+    }),
+  );
+
+  const urlAnterior =
+    window.location.pathname + window.location.search + window.location.hash;
+
+  window.history.replaceState({}, "", "/?mesa=4");
+  render(<App />);
+  window.history.replaceState({}, "", urlAnterior || "/");
+
+  expect(
+    screen.getByRole("heading", { name: "Mesa 4" }),
+  ).toBeInTheDocument();
+
+  await user.selectOptions(
+    await screen.findByLabelText("Tipo de bebida"),
+    "Expreso",
+  );
+  await user.selectOptions(screen.getByLabelText("Tamaño"), "Mediano");
+  await user.selectOptions(
+    screen.getByLabelText("País de origen"),
+    "Colombia",
+  );
+
+  await user.click(
+    screen.getByRole("button", { name: "Agregar café al carrito" }),
+  );
+  await user.click(
+    screen.getByRole("button", { name: "Agregar café al carrito" }),
+  );
+
+  await user.click(screen.getByRole("button", { name: "Pastelería" }));
+  await user.click(
+    screen.getByRole("button", { name: "Agregar al carrito" }),
+  );
+  await user.click(
+    screen.getByRole("button", { name: "Confirmar pedido" }),
+  );
+
+  expect(cuerpoRecibido).toEqual({
+    mesaId: 4,
+    items: [
+      { productoId: 1, cantidad: 2 },
+      { productoId: 19, cantidad: 1 },
+    ],
+  });
+
+  expect(await screen.findByText("Pedido #21")).toBeInTheDocument();
+  expect(screen.getByText("Estado: pendiente")).toBeInTheDocument();
+
+  const totalFormateado = new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  }).format(17220);
+
+  expect(
+    screen.getByText(`Total: ${totalFormateado}`),
+  ).toBeInTheDocument();
+});
+
 });

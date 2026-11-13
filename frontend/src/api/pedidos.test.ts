@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { crearPedido } from "./pedidos";
+import { crearPedido } from "./api";
 
 describe("crearPedido", () => {
   const fetchMock = vi.fn();
