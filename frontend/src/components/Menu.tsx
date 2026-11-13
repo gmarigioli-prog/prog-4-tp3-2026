@@ -9,9 +9,9 @@ type Tamanio = "Pocillo" | "Mediano" | "Grande";
 type Origen = "Colombia" | "Brasil" | "Etiopia";
 
 const origenes: Record<Origen, string> = {
-  Colombia: "Dulce y equilibrado, con notas frutales.",
-  Brasil: "Cuerpo intenso con un toque chocolatoso.",
-  Etiopia: "Aromático, con una leve sensación de acidez.",
+  Colombia: "Dulce, equilibrado, frutal.",
+  Brasil: "Cuerpo intenso y chocolatoso.",
+  Etiopia: "Aromático, leve acidez.",
 };
 
 function formatearPrecio(precio: number): string {
