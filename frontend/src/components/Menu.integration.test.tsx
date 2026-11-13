@@ -29,11 +29,15 @@ describe("Menu con API", () => {
   });
 
   it("muestra los productos de una respuesta 200 valida", async () => {
+    const user = userEvent.setup();
     renderMenu();
 
     expect(
       await screen.findByText("Expreso Mediano Colombia"),
     ).toBeInTheDocument();
+    expect(screen.queryByText("Muffin de chocolate")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Pastelería" }));
     expect(screen.getByText("Muffin de chocolate")).toBeInTheDocument();
   });
 

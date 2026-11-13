@@ -38,7 +38,7 @@ describe("Menu", () => {
     expect(screen.getByText("Cargando")).toBeInTheDocument();
   });
 
-  it("muestra los productos cuando la carga resuelve", async () => {
+  it("muestra las bebidas cuando la carga resuelve", async () => {
     obtenerProductosMock.mockResolvedValue(productos);
 
     renderMenu();
@@ -46,7 +46,41 @@ describe("Menu", () => {
     expect(
       await screen.findByText("Expreso Mediano Colombia"),
     ).toBeInTheDocument();
+    expect(screen.queryByText("Muffin de chocolate")).not.toBeInTheDocument();
+  });
+
+  it("separa bebidas y pastelería al cambiar de categoría", async () => {
+    const user = userEvent.setup();
+    obtenerProductosMock.mockResolvedValue(productos);
+
+    renderMenu();
+
+    expect(
+      await screen.findByText("Expreso Mediano Colombia"),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Pastelería" }));
+
     expect(screen.getByText("Muffin de chocolate")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Expreso Mediano Colombia"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Tipo de bebida")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Bebidas" }));
+
+    expect(screen.getByText("Expreso Mediano Colombia")).toBeInTheDocument();
+    expect(screen.queryByText("Muffin de chocolate")).not.toBeInTheDocument();
+  });
+
+  it("los productos de pasteleria tienen sus propios botones de agregar al carrito", async () => {
+    const user = userEvent.setup();
+    obtenerProductosMock.mockResolvedValue(productos);
+
+    renderMenu();
+
+    await user.click(screen.getByText("Muffin de chocolate"));
+    await user.click(screen.getByText("Torta selva negra"));
+    expect(screen.getByText("Agregar al carrito")).toBeInTheDocument();
   });
 
   it("muestra un error y el boton Reintentar cuando la carga rechaza", async () => {
