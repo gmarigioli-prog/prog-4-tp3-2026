@@ -79,7 +79,8 @@ describe("Menu", () => {
     renderMenu();
 
     await user.click(screen.getByText("Muffin de chocolate"));
-    expect(screen.getByText("Agregar muffin al carrito")).toBeInTheDocument();
+    await user.click(screen.getByText("Torta selva negra"));
+    expect(screen.getByText("Agregar al carrito")).toBeInTheDocument();
   });
 
   it("muestra un error y el boton Reintentar cuando la carga rechaza", async () => {
