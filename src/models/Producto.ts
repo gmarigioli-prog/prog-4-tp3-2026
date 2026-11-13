@@ -4,6 +4,11 @@ export const preciosCafe = {
   adicionalOrigen: { Brasil: 0, Colombia: 500, Etiopia: 1000 },
 } as const;
 
+export const preciosPasteleria = {
+  "Muffin de chocolate": 2500,
+  "Torta selva negra": 7000,
+} as const;
+
 type TamanioCafe = keyof typeof preciosCafe.adicionalTamanio;
 type OrigenCafe = keyof typeof preciosCafe.adicionalOrigen;
 

@@ -217,9 +217,17 @@ function Menu() {
         >
           {productosVisibles.map((producto) => (
             <li key={producto.id}>
-              <span>{producto.nombre}</span>
-              <span>{formatearPrecio(producto.precio)}</span>
-            </li>
+  <span>{producto.nombre}</span>
+  <span>Precio: {formatearPrecio(producto.precio)}</span>
+  {categoria === "pasteleria" && (
+    <button
+      type="button"
+      onClick={() => agregar({ ...producto, cantidad: 1 })}
+    >
+      Agregar al carrito
+    </button>
+  )}
+</li>
           ))}
         </ul>
       </section>
