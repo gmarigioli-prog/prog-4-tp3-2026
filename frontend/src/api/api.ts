@@ -18,6 +18,10 @@ const entradaPedidoSchema = z.object({
   mesaId: z.number().int().positive().optional(),
 });
 
+const errorSchema = z.object({
+  error: z.string().min(1),
+});
+
 const pedidoSchema = z.object({
   id: z.number().int().positive(),
   items: z.array(itemPedidoSchema),
@@ -55,7 +59,21 @@ export async function crearPedido(entrada: EntradaPedido): Promise<Pedido> {
   });
 
   if (response.status !== 201) {
-    throw new Error("No se pudo confirmar el pedido");
+    let data: unknown;
+
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("La respuesta de error no cumple el contrato");
+    }
+
+    const result = errorSchema.safeParse(data);
+
+    if (!result.success) {
+      throw new Error("La respuesta de error no cumple el contrato");
+    }
+
+    throw new Error(result.data.error);
   }
 
   const data: unknown = await response.json();
