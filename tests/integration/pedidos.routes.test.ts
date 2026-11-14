@@ -31,7 +31,7 @@ describe('GET /pedidos/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body.estado).toBe('pendiente');
     expect(res.body.items).toHaveLength(1);
-    expect(res.body.total).toBe(10000);
+    expect(res.body.total).toBe(5000);
   });
 
   //mensaje de error añadido

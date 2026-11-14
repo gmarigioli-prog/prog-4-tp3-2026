@@ -23,7 +23,7 @@ export function makeProductoRouter() {
     const precio = producto?.calcularPrecio();
     const tipoCafe = producto instanceof (require('../models/Producto').Expreso) ? 'Molido' : producto instanceof (require('../models/Producto').Filtrado) ? 'Molido' : 'N/A';
     if (!producto) {
-      return res.status(404).json({ error: 'NotFound' });
+      return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
     res.json(respuestaProducto(producto));
