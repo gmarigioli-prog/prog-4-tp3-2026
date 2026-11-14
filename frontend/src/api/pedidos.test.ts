@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { crearPedido } from "./api";
+import { crearPedido, obtenerPedido } from "./api";
 
 describe("crearPedido", () => {
   const fetchMock = vi.fn();
@@ -61,3 +61,31 @@ describe("crearPedido", () => {
     });
   });
 });
+
+describe("obtenerPedido", () => {
+    const fetchMock = vi.fn();
+
+    beforeEach(() => {
+      fetchMock.mockReset();
+      vi.stubGlobal("fetch", fetchMock);
+    });
+
+    it("consulta GET /pedidos/:id y devuelve el pedido validado", async () => {
+      const pedido = {
+        id: 12,
+        items: [{ productoId: 1, cantidad: 2 }],
+        estado: "pendiente",
+        mesaId: 5,
+        total: 10000,
+      };
+
+      fetchMock.mockResolvedValue(
+        new Response(JSON.stringify(pedido), { status: 200 }),
+      );
+
+      await expect(obtenerPedido(12)).resolves.toEqual(pedido);
+
+      expect(fetchMock).toHaveBeenCalledWith("/pedidos/12");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+  });
