@@ -182,6 +182,42 @@ describe("Menu con API", () => {
   ).toBeInTheDocument();
 });
 
+  it("muestra el error de la API y conserva el carrito", async () => {
+    const user = userEvent.setup();
+    const mensajeError = "No hay stock";
+
+    server.use(
+      http.post("/pedidos", () =>
+        HttpResponse.json({ error: mensajeError }, { status: 400 }),
+      ),
+    );
+
+    render(<App />);
+
+    await user.selectOptions(
+      await screen.findByLabelText("Tipo de bebida"),
+      "Expreso",
+    );
+    await user.selectOptions(screen.getByLabelText("Tamaño"), "Mediano");
+    await user.selectOptions(
+      screen.getByLabelText("País de origen"),
+      "Colombia",
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Agregar café al carrito" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Confirmar pedido" }),
+    );
+
+    const alerta = await screen.findByRole("alert");
+    expect(screen.getByText("Cantidad: 1")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Confirmar pedido" }),
+    ).toBeEnabled();
+    expect(alerta).toHaveTextContent(mensajeError);
+  });
+
   it(
     "actualiza el estado consultando GET /pedidos/:id sin recargar",
     async () => {

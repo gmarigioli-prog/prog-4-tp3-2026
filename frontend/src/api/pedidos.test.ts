@@ -60,6 +60,20 @@ describe("crearPedido", () => {
       body: JSON.stringify(entrada),
     });
   });
+
+  it("propaga el mensaje de la API ante un error", async () => {
+    const entrada = {
+      items: [{ productoId: 1, cantidad: 1 }],
+    };
+
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ error: "No hay stock" }), {
+        status: 400,
+      }),
+    );
+
+    await expect(crearPedido(entrada)).rejects.toThrow("No hay stock");
+  });
 });
 
 describe("obtenerPedido", () => {
