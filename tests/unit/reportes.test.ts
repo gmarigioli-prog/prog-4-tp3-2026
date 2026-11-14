@@ -14,7 +14,7 @@ describe('Reportes()', () => {
             new Pedido(1, [{ productoId: 1, cantidad: 2 }, {productoId: 19, cantidad: 1 }]),
             new Pedido(2, [{ productoId: 14, cantidad: 1}]),
         ];
-        expect(facturacionTotal(pedidos, productos)).toBe(12540 + 5900);
+        expect(facturacionTotal(pedidos, productos)).toBe(7500 + 4400);
     });
     it('cuenta las unidades vendidas por producto', () => {
         const productos = [

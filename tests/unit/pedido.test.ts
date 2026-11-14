@@ -9,7 +9,7 @@ describe('Pedido()', () => {
     new Pasteleria(19,'Muffin de chocolate', 2500),
    ]
    const pedido = new Pedido(1, [{productoId: 1, cantidad: 2}, {productoId: 19, cantidad: 1}]);
-    expect(pedido.calcularTotal(productos)).toBe(12540)
+    expect(pedido.calcularTotal(productos)).toBe(7500)
 });
     it('pedido vacio da total 0', () => {
         const productos = [

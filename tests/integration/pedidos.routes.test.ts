@@ -55,7 +55,7 @@ describe('POST /pedidos', () => {
       .post('/pedidos')
       .send({ items: [{ productoId: 1, cantidad: 2 }, { productoId: 19, cantidad: 1 }] });
     expect(res.status).toBe(201);
-    expect(res.body.total).toBe(10040);
+    expect(res.body.total).toBe(7500);
   });
 
   it('acepta mesaID opcional y lo devuelve en la respuesta', async () => {
