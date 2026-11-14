@@ -6,13 +6,21 @@ export default defineConfig({
   retries: 1,
   reporter: [['html'], ['list']],
   use: {
-    baseURL: 'http://localhost:4000',
+    baseURL: 'http://127.0.0.1:5173',
     trace: 'on-first-retry'
   },
-  webServer: {
-    command: 'npm run start:e2e',
-    url: 'http://localhost:4000/health',
-    reuseExistingServer: !process.env.CI,
-    timeout: 20_000
-  }
+  webServer: [
+    {
+      command: 'npm run dev',
+      url: 'http://127.0.0.1:3000/health',
+      reuseExistingServer: !process.env.CI,
+      timeout: 20_000
+    },
+    {
+      command: 'npm --prefix frontend run dev -- --host 127.0.0.1',
+      url: 'http://127.0.0.1:5173',
+      reuseExistingServer: !process.env.CI,
+      timeout: 20_000
+    }
+  ]
 });
