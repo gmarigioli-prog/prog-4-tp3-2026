@@ -67,3 +67,20 @@ export async function crearPedido(entrada: EntradaPedido): Promise<Pedido> {
 
   return result.data;
 }
+
+export async function obtenerPedido(id: number): Promise<Pedido> {
+  const response = await fetch(`/pedidos/${id}`);
+
+  if (response.status !== 200) {
+    throw new Error("No se pudo consultar el pedido");
+  }
+
+  const data: unknown = await response.json();
+  const result = pedidoSchema.safeParse(data);
+
+  if (!result.success) {
+    throw new Error("La respuesta del pedido no cumple el contrato");
+  }
+
+  return result.data;
+}

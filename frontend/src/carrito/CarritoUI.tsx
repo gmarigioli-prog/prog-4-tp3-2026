@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { crearPedido, type Pedido } from "../api/api";
+import { useEffect, useState } from "react";
+import { crearPedido, obtenerPedido, type Pedido } from "../api/api";
 import { useCarrito } from "./CarritoContext";
 
 function formatearPrecio(precio: number): string {
@@ -19,6 +19,50 @@ export function CarritoUI({ mesaId }: CarritoUIProps) {
   const [pedido, setPedido] = useState<Pedido | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
+  const pedidoId = pedido?.id;
+  const estadoPedido = pedido?.estado;
+
+  useEffect(() => {
+    if (pedidoId === undefined || estadoPedido === "entregado") {
+      return;
+    }
+
+    const id = pedidoId;
+    let cancelado = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    async function consultarPedido() {
+      try {
+        const pedidoActualizado = await obtenerPedido(id);
+
+        if (cancelado) {
+          return;
+        }
+
+        setPedido(pedidoActualizado);
+        setMensajeError("");
+
+        if (pedidoActualizado.estado !== "entregado") {
+          timer = setTimeout(() => void consultarPedido(), 1000);
+        }
+      } catch (error: unknown) {
+        if (!cancelado) {
+          setMensajeError(
+            error instanceof Error
+              ? error.message
+              : "No se pudo consultar el pedido",
+          );
+        }
+      }
+    }
+
+    timer = setTimeout(() => void consultarPedido(), 1000);
+
+    return () => {
+      cancelado = true;
+      clearTimeout(timer);
+    };
+  }, [pedidoId, estadoPedido]);
 
   async function confirmarPedido() {
     setEnviando(true);
@@ -64,6 +108,7 @@ export function CarritoUI({ mesaId }: CarritoUIProps) {
         <p>{`Pedido #${pedido.id}`}</p>
         <p>{`Estado: ${pedido.estado}`}</p>
         <p>{`Total: ${formatearPrecio(pedido.total)}`}</p>
+        {mensajeError && <p role="alert">{mensajeError}</p>}
       </section>
     );
   }
