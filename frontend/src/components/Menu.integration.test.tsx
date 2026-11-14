@@ -182,4 +182,70 @@ describe("Menu con API", () => {
   ).toBeInTheDocument();
 });
 
+  it(
+    "actualiza el estado consultando GET /pedidos/:id sin recargar",
+    async () => {
+      const user = userEvent.setup();
+      let consultas = 0;
+
+      const pedido = {
+        id: 21,
+        items: [{ productoId: 1, cantidad: 1 }],
+        estado: "pendiente",
+        mesaId: 4,
+        total: 7360,
+      };
+
+      server.use(
+        http.post("/pedidos", () =>
+          HttpResponse.json(pedido, { status: 201 }),
+        ),
+        http.get("/pedidos/21", () => {
+          consultas += 1;
+
+          return HttpResponse.json({
+            ...pedido,
+            estado: consultas === 1 ? "pendiente" : "entregado",
+          });
+        }),
+      );
+
+      const urlAnterior =
+        window.location.pathname +
+        window.location.search +
+        window.location.hash;
+
+      window.history.replaceState({}, "", "/?mesa=4");
+      render(<App />);
+      window.history.replaceState({}, "", urlAnterior || "/");
+
+      await user.selectOptions(
+        await screen.findByLabelText("Tipo de bebida"),
+        "Expreso",
+      );
+      await user.selectOptions(screen.getByLabelText("Tamaño"), "Mediano");
+      await user.selectOptions(
+        screen.getByLabelText("País de origen"),
+        "Colombia",
+      );
+      await user.click(
+        screen.getByRole("button", { name: "Agregar café al carrito" }),
+      );
+      await user.click(
+        screen.getByRole("button", { name: "Confirmar pedido" }),
+      );
+
+      expect(await screen.findByText("Pedido #21")).toBeInTheDocument();
+      expect(await screen.findByText("Estado: pendiente")).toBeInTheDocument();
+      expect(
+        await screen.findByText(
+          "Estado: entregado",
+          {},
+          { timeout: 8000 },
+        ),
+      ).toBeInTheDocument();
+      expect(consultas).toBeGreaterThanOrEqual(2);
+    },
+    10000,
+  );
 });
