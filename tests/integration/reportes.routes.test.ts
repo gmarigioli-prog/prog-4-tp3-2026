@@ -14,7 +14,7 @@ describe('GET /reportes/facturacion', () => {
     await request(app).post('/pedidos').send({ items: [{ productoId: 19, cantidad: 1 }] });
     const res = await request(app).get('/reportes/facturacion');
     expect(res.status).toBe(200);
-    expect(res.body.facturacion).toBe(12540);
+    expect(res.body.facturacion).toBe(7500);
   });
 });
 

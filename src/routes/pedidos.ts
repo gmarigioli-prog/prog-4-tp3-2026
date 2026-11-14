@@ -59,7 +59,7 @@ export function makePedidoRouter(pedidos: Pedido[] = []) {
     const pedido = pedidos.find(pedido => pedido.id === id);
 
     if (!pedido) {
-      return res.status(404).json({ error: 'NotFound' });
+      return res.status(404).json({ error: 'Pedido no encontrado' });
     }
       //cambio tp3
 

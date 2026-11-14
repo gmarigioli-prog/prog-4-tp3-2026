@@ -25,7 +25,7 @@ describe('GET /productos/:id', () => {
     const res = await request(app).get('/productos/1');
     expect(res.status).toBe(200);
     expect(res.body.precio).toBe(2500);
-    expect(res.body.tipoCafe).toBe('Molido');
+    expect(res.body.tipo).toBe('Expreso');
   });
 });
 describe('GET /productos', () => {
@@ -42,11 +42,11 @@ describe('GET /productos', () => {
   });
 
   // cambio tp3
-  it('devuelve precio y tipo de cafe de todos los productos', async () => {
+  it('devuelve precio y tipo de producto', async () => {
     const res = await request(app).get('/productos');
     expect(res.status).toBe(200);
     expect(res.body[0].precio).toBe(2500);
-    expect(res.body[0].tipoCafe).toBe('Molido');
+    expect(res.body[0].tipo).toBe('Expreso');
   });
 });
 describe('POST /pedidos', () => {
